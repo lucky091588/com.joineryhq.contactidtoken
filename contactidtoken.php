@@ -170,3 +170,34 @@ function contactidtoken_civicrm_themes(&$themes) {
 //  ));
 //  _contactidtoken_civix_navigationMenu($menu);
 //}
+
+/**
+ * Implements hook_civicrm_tokens().
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokens
+ */
+function contactidtoken_civicrm_tokens(&$tokens) {
+  $tokens['contactid'] = [
+    'contactid.nameid' => 'Contact Name and ID',
+  ];
+}
+
+/**
+ * Implements hook_civicrm__tokenValues().
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_tokenValues
+ */
+function contactidtoken_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
+  if(isset($tokens['contactid'])) {
+    if (!(array_key_exists('nameid', $tokens['contactid']) || in_array('nameid', $tokens['contactid']))) {
+      return;
+    }
+
+    foreach ($cids as $cid) {
+      $contactDetails = civicrm_api3('Contact', 'get', [
+        'sequential' => 1,
+        'id' => $cid,
+      ]);
+
+      $values[$cid]['contactid.nameid'] = $contactDetails['values'][0]['last_name'] . ' ' . $cid;
+    }
+  }
+}
