@@ -178,6 +178,7 @@ function contactidtoken_civicrm_themes(&$themes) {
 function contactidtoken_civicrm_tokens(&$tokens) {
   $tokens['contactid'] = [
     'contactid.nameid' => 'Contact Name and ID',
+    'contactid.used' => 'All tokens used',
   ];
 }
 
@@ -187,17 +188,37 @@ function contactidtoken_civicrm_tokens(&$tokens) {
  */
 function contactidtoken_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
   if(isset($tokens['contactid'])) {
-    if (!(array_key_exists('nameid', $tokens['contactid']) || in_array('nameid', $tokens['contactid']))) {
+    if (
+      !(array_key_exists('nameid', $tokens['contactid'])
+      || in_array('nameid', $tokens['contactid']))
+      || !(array_key_exists('used', $tokens['contactid'])
+      || in_array('used', $tokens['contactid']))
+    ) {
       return;
     }
 
+    $tokenUsed = '';
     foreach ($cids as $cid) {
       $contactDetails = civicrm_api3('Contact', 'get', [
         'sequential' => 1,
         'id' => $cid,
       ]);
 
-      $values[$cid]['contactid.nameid'] = $contactDetails['values'][0]['last_name'] . ' ' . $cid;
+      $values[$cid]['contactid.nameid'] = $contactDetails['values'][0]['last_name'] . '+' . $cid;
+
+      foreach ($tokens as $token => $val) {
+        foreach ($val as $v) {
+          if ($token == 'contactid') {
+            if ($v != 'used') {
+              $tokenUsed .= ucfirst($token) . ': ' . $values[$cid][$token . '.' . $v] . ', ';
+            }
+          } else {
+            $tokenUsed .= ucfirst($token) . ': ' . $values[$cid][$v] . ', ';
+          }
+        }
+      }
+
+      $values[$cid]['contactid.used'] = rtrim($tokenUsed, ', ');
     }
   }
 }
