@@ -188,15 +188,6 @@ function contactidtoken_civicrm_tokens(&$tokens) {
  */
 function contactidtoken_civicrm_tokenValues(&$values, $cids, $job = null, $tokens = [], $context = null) {
   if(isset($tokens['contactid'])) {
-    if (
-      !(array_key_exists('nameid', $tokens['contactid'])
-      || in_array('nameid', $tokens['contactid']))
-      || !(array_key_exists('used', $tokens['contactid'])
-      || in_array('used', $tokens['contactid']))
-    ) {
-      return;
-    }
-
     $tokenUsed = '';
     foreach ($cids as $cid) {
       $contactDetails = civicrm_api3('Contact', 'get', [
