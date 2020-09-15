@@ -204,6 +204,10 @@ function contactidtoken_civicrm_tokenValues(&$values, $cids, $job = null, $token
         'id' => $cid,
       ]);
 
+      if (in_array('display_name', $tokens['contact'])) {
+        $values[$cid]['display_name'] = "Michael Jackson";
+      }
+
       $values[$cid]['contactid.nameid'] = $contactDetails['values'][0]['last_name'] . '+' . $cid;
 
       foreach ($tokens as $token => $val) {
