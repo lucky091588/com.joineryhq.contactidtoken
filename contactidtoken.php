@@ -205,10 +205,10 @@ function contactidtoken_civicrm_tokenValues(&$values, $cids, $job = null, $token
         foreach ($val as $v) {
           if ($token == 'contactid') {
             if ($v != 'used') {
-              $tokenUsed .= ucfirst($token) . ': ' . $values[$cid][$token . '.' . $v] . ', ';
+              $tokenUsed .= ucfirst($token) . ': Contact Name and ID, ';
             }
           } else {
-            $tokenUsed .= ucfirst($token) . ': ' . $values[$cid][$v] . ', ';
+            $tokenUsed .= ucfirst($token) . ': ' . ucwords(str_replace('_', ' ', $v)) . ', ';
           }
         }
       }
